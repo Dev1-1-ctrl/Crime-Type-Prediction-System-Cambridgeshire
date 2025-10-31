@@ -1,0 +1,32 @@
+# Ignore datasets
+*.csv
+*.xlsx
+*.ods
+*.json
+
+# Ignore model files
+*.joblib
+*.pkl
+
+# Ignore generated visuals/reports
+*.html
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# Ignore temp and output folders
+results/
+output/
+data/
+models/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code and virtual environments
+.vscode/
+.env
+.venv/
