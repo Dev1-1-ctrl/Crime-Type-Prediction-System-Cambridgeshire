@@ -1,4 +1,3 @@
-# Step 3.2 — Grouped classes + Lag + SMOTE + XGBoost
 import pandas as pd
 import numpy as np
 from xgboost import XGBClassifier
@@ -7,12 +6,12 @@ from sklearn.metrics import accuracy_score, f1_score, classification_report, top
 from imblearn.over_sampling import SMOTE
 import joblib
 
-# ---------- CONFIG ----------
-# or "crime_type_features.csv"
+# CONFIG
+# "crime_type_features.csv"
 INPUT_CSV = "crime_type_features_WITH_SYNTHETIC_CONTEXT.csv"
 TEST_YEAR = 2025
 
-# ---------- LOAD ----------
+# Loading
 df = pd.read_csv(INPUT_CSV)
 if "YearMonth" not in df.columns:
     df["YearMonth"] = pd.to_datetime(
@@ -23,7 +22,7 @@ else:
 df["Crime type"] = df["Crime type"].astype(str).str.strip()
 df["LSOA name"] = df["LSOA name"].astype(str).str.strip()
 
-# ---------- GROUP 14 -> 5 ----------
+# GROUPS
 crime_map = {
     "Anti-social behaviour": "Anti-social",
     "Violence and sexual offences": "Violence",
@@ -42,7 +41,7 @@ crime_map = {
 }
 df["Crime_group"] = df["Crime type"].map(crime_map).fillna("Other")
 
-# ---------- LAG FEATURES (last month counts per group per LSOA) ----------
+# LAG FEATURES
 monthly = (
     df.groupby(["LSOA name", "Year", "Month_num",
                "Crime_group"], as_index=False)
@@ -69,14 +68,14 @@ df = df.merge(lags, on=["LSOA name", "YearMonth"], how="left")
 lag_feat_cols = [c for c in df.columns if c.startswith("lag1_")]
 df[lag_feat_cols] = df[lag_feat_cols].fillna(0)
 
-# ---------- ENCODE ----------
+# Encode
 lsoa_enc = LabelEncoder()
 df["LSOA_encoded"] = lsoa_enc.fit_transform(df["LSOA name"])
 
 tgt_enc = LabelEncoder()
 df["y_group"] = tgt_enc.fit_transform(df["Crime_group"])
 
-# ---------- FEATURES ----------
+# Features
 base_feats = ["Year", "Month_num", "Season",
               "Latitude", "Longitude", "LSOA_encoded"]
 synth_feats = [c for c in [
@@ -94,7 +93,7 @@ y_col = "y_group"
 
 df = df.dropna(subset=X_cols + [y_col]).copy()
 
-# ---------- TIME SPLIT ----------
+# Time split
 train_mask = df["Year"] < TEST_YEAR
 test_mask = df["Year"] == TEST_YEAR
 
@@ -106,13 +105,13 @@ y_test = df.loc[test_mask,  y_col].reset_index(drop=True)
 print(f"Train: {X_train.shape} | Test: {X_test.shape}")
 print("Grouped classes:", list(tgt_enc.classes_))
 
-# ---------- SMOTE (balance 5 groups on TRAIN ONLY) ----------
+# SMOTE (balance 5 groups on TRAIN ONLY)
 print("Before SMOTE:", y_train.value_counts().to_dict())
 sm = SMOTE(random_state=42)
 X_train_bal, y_train_bal = sm.fit_resample(X_train, y_train)
 print("After SMOTE:", y_train_bal.value_counts().to_dict())
 
-# ---------- TRAIN XGBOOST ----------
+# TRAIN XGBOOST
 model = XGBClassifier(
     n_estimators=700,
     max_depth=8,
@@ -126,7 +125,7 @@ model = XGBClassifier(
 )
 model.fit(X_train_bal, y_train_bal)
 
-# ---------- EVAL ----------
+# Evaluate
 y_pred = model.predict(X_test)
 proba = model.predict_proba(X_test)
 
@@ -134,17 +133,17 @@ acc = accuracy_score(y_test, y_pred)
 f1m = f1_score(y_test, y_pred, average="macro")
 top3 = top_k_accuracy_score(y_test, proba, k=3)
 
-print(f"\n✅ Grouped Accuracy (SMOTE): {acc:.2%}")
-print(f"✅ Grouped Macro F1 (SMOTE): {f1m:.3f}")
-print(f"✅ Top‑3 Accuracy: {top3:.2%}\n")
+print(f"\n Grouped Accuracy (SMOTE): {acc:.2%}")
+print(f" Grouped Macro F1 (SMOTE): {f1m:.3f}")
+print(f" Top‑3 Accuracy: {top3:.2%}\n")
 
 print("Classification Report (Grouped, SMOTE):")
 print(classification_report(y_test, y_pred,
       target_names=tgt_enc.classes_, digits=3))
 
-# ---------- SAVE ----------
+# Saving
 joblib.dump(model, "crime_type_xgb_GROUPED_SMOTE_model.joblib")
 joblib.dump(lsoa_enc, "lsoa_encoder.joblib")           # ok to overwrite
 joblib.dump(tgt_enc,  "crime_group_encoder.joblib")
 pd.Series(X_cols).to_csv("features_used_GROUPED_SMOTE.txt", index=False)
-print("\n💾 Saved: crime_type_xgb_GROUPED_SMOTE_model.joblib, crime_group_encoder.joblib, features_used_GROUPED_SMOTE.txt")
+print("\n Saved: crime_type_xgb_GROUPED_SMOTE_model.joblib, crime_group_encoder.joblib, features_used_GROUPED_SMOTE.txt")

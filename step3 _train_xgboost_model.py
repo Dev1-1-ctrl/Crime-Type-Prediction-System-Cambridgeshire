@@ -1,20 +1,19 @@
-# Step 3 — Train & Evaluate (XGBoost)
 import pandas as pd
 import joblib
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
-# 1) Load train/test splits
+# Load train/test splits
 X_train = pd.read_csv("X_train.csv")
 y_train = pd.read_csv("y_train.csv").squeeze()
 X_test = pd.read_csv("X_test.csv")
 y_test = pd.read_csv("y_test.csv").squeeze()
 
-# 2) Load encoders for decoding crime types
+# Load encoders for decoding crime types
 crime_enc = joblib.load("crime_type_encoder.joblib")
 
-# 3) Train XGBoost (multi-class with imbalance handling)
+# Train XGBoost
 model = XGBClassifier(
     n_estimators=500,
     max_depth=8,
@@ -29,15 +28,15 @@ model = XGBClassifier(
 )
 model.fit(X_train, y_train)
 
-# 4) Predictions
+# Predictions
 y_pred = model.predict(X_test)
 
-# 5) Evaluate
+# Evaluate
 acc = accuracy_score(y_test, y_pred)
 f1_macro = f1_score(y_test, y_pred, average="macro")
 
-print(f"✅ Accuracy: {acc:.2%}")
-print(f"✅ Macro F1: {f1_macro:.3f}")
+print(f" Accuracy: {acc:.2%}")
+print(f" Macro F1: {f1_macro:.3f}")
 
 print("\nClassification Report:")
 print(classification_report(
@@ -46,7 +45,7 @@ print(classification_report(
     digits=3
 ))
 
-# 6) Confusion Matrix
+# Confusion Matrix
 cm = confusion_matrix(y_test, y_pred)
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm, display_labels=crime_enc.classes_)
@@ -56,7 +55,7 @@ plt.title("Confusion Matrix — Crime Type (Test: 2025)")
 plt.tight_layout()
 plt.show()
 
-# 7) Feature Importance
+# Feature Importance
 importances = model.feature_importances_
 feat_names = X_train.columns
 fi = pd.DataFrame({"feature": feat_names, "importance": importances}
@@ -72,6 +71,6 @@ plt.xlabel("Importance")
 plt.tight_layout()
 plt.show()
 
-# 8) Save model
+# Saving the model
 joblib.dump(model, "crime_type_xgb_model.joblib")
-print("💾 Model saved → crime_type_xgb_model.joblib")
+print(" Model saved → crime_type_xgb_model.joblib")

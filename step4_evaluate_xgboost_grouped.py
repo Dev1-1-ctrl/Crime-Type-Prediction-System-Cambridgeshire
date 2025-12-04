@@ -8,15 +8,15 @@ try:
 except Exception:
     top_k_accuracy_score = None
 
-# ======= CONFIG (must match Step 3) =======
-# or "crime_type_features.csv"
+# CONFIG
+# "crime_type_features.csv"
 INPUT_CSV = "crime_type_features_WITH_SYNTHETIC_CONTEXT.csv"
 TEST_YEAR = 2025
-MODEL_FILE = "crime_type_xgb_GROUPED_model.joblib"
+MODEL_FILE = "crime_type_xgb_GROUPED_BALANCED_model.joblib"
 LSOA_ENC = "lsoa_encoder.joblib"
 GRP_ENC = "crime_group_encoder.joblib"
-FEATS_FILE = "features_used_GROUPED.txt"
-# ==========================================
+FEATS_FILE = "features_used_GROUPED_BALANCED.txt"
+
 
 print("Loading data and artifacts...")
 df = pd.read_csv(INPUT_CSV)
@@ -24,7 +24,7 @@ model: XGBClassifier = joblib.load(MODEL_FILE)
 lsoa_enc = joblib.load(LSOA_ENC)
 grp_enc = joblib.load(GRP_ENC)
 
-# 1) Pre-clean (same as Step 3)
+# Pre-clean (same as Step 3)
 if "YearMonth" not in df.columns:
     df["YearMonth"] = pd.to_datetime(
         dict(year=df["Year"], month=df["Month_num"], day=1))
@@ -34,7 +34,7 @@ else:
 df["Crime type"] = df["Crime type"].astype(str).str.strip()
 df["LSOA name"] = df["LSOA name"].astype(str).str.strip()
 
-# 2) Same 14->5 group mapping
+# Same 14-5 group mapping
 crime_map = {
     "Anti-social behaviour": "Anti-social",
     "Violence and sexual offences": "Violence",
@@ -53,7 +53,7 @@ crime_map = {
 }
 df["Crime_group"] = df["Crime type"].map(crime_map).fillna("Other")
 
-# 3) Rebuild history features (lag1_*) from FULL history
+# Rebuild history features (lag1_*)
 monthly = (
     df.groupby(["LSOA name", "Year", "Month_num",
                "Crime_group"], as_index=False)
@@ -76,17 +76,17 @@ lag_cols = ["LSOA name", "YearMonth"] + \
 lags = wide[lag_cols]
 df = df.merge(lags, on=["LSOA name", "YearMonth"], how="left")
 
-# ✅ correct fill for lag columns (no NameError)
+#  correct fill for lag columns
 lag_cols_present = [col for col in df.columns if col.startswith("lag1_")]
 for c in lag_cols_present:
     df[c] = df[c].fillna(0)
 
-# 4) Use saved encoders (don’t refit)
+#  saved encoders
 df["LSOA_encoded"] = lsoa_enc.transform(df["LSOA name"])
-# ✅ make y a pandas Series (fixes .loc error)
+#  make y a pandas Series (fixes .loc error)
 y = pd.Series(grp_enc.transform(df["Crime_group"]), index=df.index, name="y")
 
-# 5) Build features exactly as trained
+# Build features exactly as trained
 try:
     raw_feats = pd.read_csv(
         FEATS_FILE, header=None).squeeze().dropna().astype(str).tolist()
@@ -109,7 +109,7 @@ except Exception:
 
 X = df[feat_list].apply(pd.to_numeric, errors="coerce").fillna(0)
 
-# 6) Time-aware test split (Year == TEST_YEAR)
+# Time-aware test split
 test_mask = (df["Year"] == TEST_YEAR)
 X_test = X.loc[test_mask].reset_index(drop=True)
 y_test = y.loc[test_mask].astype(int).reset_index(drop=True)
@@ -117,22 +117,22 @@ y_test = y.loc[test_mask].astype(int).reset_index(drop=True)
 print(f"Using {len(feat_list)} features.")
 print(f"Test rows (Year={TEST_YEAR}): {len(X_test)}")
 
-# 7) Predict & evaluate
+# Predict and  evaluate
 proba = model.predict_proba(X_test)
 y_pred = proba.argmax(axis=1)
 
 acc = accuracy_score(y_test, y_pred)
 f1m = f1_score(y_test, y_pred, average="macro")
 
-print(f"\n✅ Accuracy: {acc:.2%}")
-print(f"✅ Macro F1: {f1m:.3f}")
+print(f"\n Accuracy: {acc:.2%}")
+print(f" Macro F1: {f1m:.3f}")
 if top_k_accuracy_score is not None:
     top3 = top_k_accuracy_score(y_test, proba, k=3)
-    print(f"✅ Top-3 Accuracy: {top3:.2%}")
+    print(f" Top-3 Accuracy: {top3:.2%}")
 else:
     top3 = np.nan
 
-# Report + CM
+# Report and CM
 report_txt = classification_report(y_test, y_pred, target_names=list(
     grp_enc.classes_), digits=3, zero_division=0)
 print("\nClassification Report:")
@@ -142,7 +142,7 @@ cm = confusion_matrix(y_test, y_pred, labels=list(
 pd.DataFrame(cm, index=grp_enc.classes_, columns=grp_enc.classes_).to_csv(
     "results_confusion_matrix.csv")
 
-# 8) Save summaries
+#  Saving summaries
 pd.DataFrame([{
     "Model": "Grouped XGB (Step3 retrain)",
     "Accuracy": acc,
@@ -155,7 +155,7 @@ pd.DataFrame([{
 with open("results_classification_report.txt", "w", encoding="utf-8") as f:
     f.write(report_txt)
 
-# Optional: CM PNG
+# CM PNG
 try:
     import matplotlib.pyplot as plt
     from sklearn.metrics import ConfusionMatrixDisplay
@@ -171,4 +171,4 @@ try:
 except Exception as e:
     print("(Plot skipped)", e)
 
-print("\n💾 Saved: results_summary.csv, results_classification_report.txt, results_confusion_matrix.csv")
+print("\n Saved: results_summary.csv, results_classification_report.txt, results_confusion_matrix.csv")

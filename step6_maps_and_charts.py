@@ -1,22 +1,18 @@
-# step6_maps_and_charts.py
 import pandas as pd
 import folium
 from folium.plugins import HeatMap
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# ================== CONFIG ==================
-# MODE: "actual_2025" (uses crime_type_features.csv)  OR  "predicted_2026"
-MODE = "actual_2025"          # change to "predicted_2026" to use model outputs
+MODE = "predicted_2026"
 INPUT_ACTUAL = "crime_type_features.csv"
-INPUT_PRED = "predicted_crime_2026_per_lsoa.csv"   # from Step 5
-YEAR = 2025                  # respected only in actual mode
+INPUT_PRED = "predicted_crime_2025_per_lsoa.csv"   # from Step 5
+YEAR = 2025
 MAX_HEAT_POINTS = 8000
 CENTER = [52.2, 0.12]
 ZOOM = 10
-# ============================================
 
-# ---------- helpers ----------
+# helpers
 
 
 def group_crime(c):
@@ -48,7 +44,7 @@ colors_for_bar = {
 }
 
 
-def pin_size(n):  # keep sizes reasonable
+def pin_size(n):  # not making the sizes too big or too small.
     try:
         n = float(n)
     except:
@@ -56,24 +52,24 @@ def pin_size(n):  # keep sizes reasonable
     return max(4, min(11, int((n**0.5)/2 + 4)))
 
 
-# ---------- load & prepare ----------
+# load and prepare
 if MODE == "actual_2025":
     df = pd.read_csv(INPUT_ACTUAL)
     for c in ["Latitude", "Longitude", "Crime type", "LSOA name"]:
         if c not in df.columns:
             raise ValueError(f"Missing required column in {INPUT_ACTUAL}: {c}")
 
-    # basic clean + filter year
+    # basic cleaning and filtering the year
     df["Latitude"] = pd.to_numeric(df["Latitude"], errors="coerce")
     df["Longitude"] = pd.to_numeric(df["Longitude"], errors="coerce")
     df = df.dropna(subset=["Latitude", "Longitude"]).copy()
     if YEAR is not None and "Year" in df.columns:
         df = df[df["Year"] == YEAR].copy()
 
-    # group to 5 buckets
+    # group to 5
     df["Crime_group"] = df["Crime type"].apply(group_crime)
 
-    # per-LSOA centroid + modal group + counts (for pins)
+    # per-LSOA centroid, modal group and counts (for pins)
     centroids = df.groupby("LSOA name")[["Latitude", "Longitude"]].mean()
     mode_grp = df.groupby("LSOA name")["Crime_group"].agg(
         lambda s: s.mode().iat[0])
@@ -83,7 +79,7 @@ if MODE == "actual_2025":
            .reset_index()
            .dropna(subset=["Latitude", "Longitude"]))
 
-    # heatmap points = raw incidents (best visual)
+    # heatmap points = raw incidents
     heat_points = df[["Latitude", "Longitude"]].copy()
     out_html = f"crime_map_actual_{YEAR}.html"
     out_png = f"chart_actual_{YEAR}_distribution.png"
@@ -96,12 +92,12 @@ elif MODE == "predicted_2026":
         if c not in df.columns:
             raise ValueError(f"Missing required column in {INPUT_PRED}: {c}")
 
-    # pins: one per LSOA, color by predicted group
+    # pins is one per LSOA, color by predicted group
     agg = df.rename(columns={"top_group": "top_group"})[
         ["LSOA name", "Latitude", "Longitude", "top_group"]].copy()
-    agg["count"] = 1  # fake count for pin sizing (uniform)
+    agg["count"] = 1
 
-    # heatmap: we only have centroids — still useful but lighter; weight equally
+    # heatmap: we only have centroids
     heat_points = df[["Latitude", "Longitude"]].copy()
     out_html = "crime_map_predicted_2026.html"
     out_png = "chart_predicted_2026_distribution.png"
@@ -110,7 +106,7 @@ elif MODE == "predicted_2026":
 else:
     raise ValueError("MODE must be 'actual_2025' or 'predicted_2026'.")
 
-# ---------- make map ----------
+#  make map
 m = folium.Map(location=CENTER, zoom_start=ZOOM, control_scale=True)
 
 # basemaps (Google-ish)
@@ -125,7 +121,7 @@ folium.TileLayer(
     attr="Esri", name="Esri.WorldImagery (satellite)", overlay=False, control=True
 ).add_to(m)
 
-# Heatmap layer (toggle)
+# Heatmap layer
 heat_layer = folium.FeatureGroup(name="Heatmap", show=True)
 hp = heat_points.dropna().copy()
 if len(hp) > MAX_HEAT_POINTS:
@@ -172,11 +168,11 @@ m.get_root().html.add_child(folium.Element(legend))
 
 folium.LayerControl(collapsed=False).add_to(m)
 m.save(out_html)
-print(f"✅ Saved map → {out_html}")
+print(f" Saved map → {out_html}")
 
-# ---------- charts + summary ----------
+#  charts and  summary
 if MODE == "actual_2025":
-    # distribution by top group per LSOA (from agg)
+    # distribution by top group per LSOA
     dist = agg["top_group"].value_counts().reindex(
         ["Violence", "Theft", "Anti-social", "Drugs", "Other"]).fillna(0)
 else:
@@ -194,10 +190,10 @@ plt.xticks(rotation=30, ha="right")
 plt.tight_layout()
 plt.savefig(out_png, dpi=150)
 plt.close()
-print(f"✅ Saved chart → {out_png}")
+print(f" Saved chart → {out_png}")
 
 # CSV summary
 dist.to_csv(out_csv, header=["count"])
-print(f"✅ Saved summary → {out_csv}")
+print(f" Saved summary → {out_csv}")
 
 print("Done.")
