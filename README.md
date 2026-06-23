@@ -1,6 +1,6 @@
 # 🚔 Predicting & Analysing Crime Types in Cambridgeshire
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue)  ![XGBoost](https://img.shields.io/badge/Model-XGBoost-green)  ![Status](https://img.shields.io/badge/Status-Completed-success)  ![License](https://img.shields.io/badge/License-Academic-orange)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)      ![XGBoost](https://img.shields.io/badge/Model-XGBoost-green)      ![Status](https://img.shields.io/badge/Status-Completed-success)      ![License](https://img.shields.io/badge/License-Academic-orange)
 
 > A machine learning system for predicting crime categories using historical UK Police data, spatial features, and temporal lag patterns.
 
@@ -231,8 +231,7 @@ python scripts/map_generation.py
 ## 👨‍💻 Author
 
 **Dev Narayan**
-BSc (Hons) Computer Science — Final Year Project
-University of Bedfordshire
+BSc (Hons) Computer Science — Final Year Project of Anglia Ruskin University
 
 ---
 
