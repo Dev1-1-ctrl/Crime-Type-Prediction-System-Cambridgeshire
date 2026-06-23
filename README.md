@@ -20,8 +20,8 @@ The system combines:
 
 ## 🗺️ Crime Analysis Map
 
-<!-- Replace with your actual screenshot -->
-![Crime Heatmap](images/crime_heatmap.png)
+<img width="921" height="463" alt="image" src="https://github.com/user-attachments/assets/7cd3ec6c-0f42-4d39-b040-39c159031f80" />
+
 
 ---
 
