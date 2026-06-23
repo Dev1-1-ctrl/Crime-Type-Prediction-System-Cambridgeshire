@@ -205,6 +205,7 @@ Crime-Prediction-Project
 │   └── map_generation.py
 │
 └── README.md
+
 🚀 Running the Project
 Install Dependencies
 pip install pandas numpy scikit-learn xgboost matplotlib seaborn folium imbalanced-learn joblib
@@ -212,12 +213,14 @@ Train Model
 python xgboost_grouped_model.py
 Generate Crime Maps
 python map_generation.py
+
 🔮 Future Work
 Incorporate real socioeconomic datasets
 Improve minority crime prediction
 Explore deep learning approaches
 Deploy as a web application
 Integrate real-time crime data
+
 👨‍💻 Author
 
 Dev Narayan
