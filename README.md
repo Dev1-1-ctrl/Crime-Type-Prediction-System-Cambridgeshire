@@ -1,67 +1,122 @@
-Predicting and Analysing Crime Types in Cambridgeshire Using Machine Learning
-Overview
+ 🚔 Predicting and Analysing Crime Types in Cambridgeshire Using Machine Learning
 
-This project uses machine learning techniques to analyse historical crime data and predict crime categories across Cambridgeshire. The system combines spatial, temporal, and contextual features to identify crime patterns and improve crime-type prediction accuracy.
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![XGBoost](https://img.shields.io/badge/Model-XGBoost-green)
+![Status](https://img.shields.io/badge/Status-Completed-success)
+![License](https://img.shields.io/badge/License-Academic-orange)
 
-The project was developed using Python and incorporates data preprocessing, feature engineering, machine learning modelling, evaluation, and geospatial visualisation.
+## 📌 Project Overview
 
-Objectives
-Analyse crime trends in Cambridgeshire from 2017–2025.
-Predict crime categories using machine learning models.
-Compare Random Forest and XGBoost performance.
-Investigate the impact of historical crime patterns using lag features.
-Visualise crime hotspots through interactive maps.
-Evaluate model effectiveness using multiple performance metrics.
-Dataset
+Crime prediction is an important area of data analytics that helps identify patterns, understand crime trends, and support evidence-based decision making.
 
-Source: UK Police Crime Data
+This project analyses historical crime data from Cambridgeshire (2017–2025) and applies machine learning techniques to predict crime categories using temporal, spatial, and contextual features.
 
-Coverage:
+The system combines:
 
-Cambridgeshire
-2017–2025
+- Historical crime records
+- Geographical information
+- Feature engineering
+- Lag-based crime history
+- Machine learning models
+- Crime hotspot visualisation
 
-Features include:
+---
 
-Crime Type
-Month and Year
-Latitude and Longitude
-LSOA Name
-Seasonal Information
-Historical Crime Counts (Lag Features)
-Synthetic Contextual Variables
-Data Processing
+## 🗺️ Crime Analysis Map
 
-The following preprocessing steps were applied:
+Insert your crime map screenshot here.
 
-Data cleaning and validation
-Missing value handling
-Feature engineering
-Label encoding
-Crime category grouping
-Temporal feature creation
-Lag feature generation
-Dataset merging and aggregation
-Crime Category Grouping
+![Crime Heatmap](images/crime_heatmap.png)
 
-Original crime types were grouped into five major categories:
+---
 
-Theft
-Violence
-Anti-social
-Drugs
-Other
+## 🎯 Objectives
 
-This reduced class imbalance and improved model performance.
+- Analyse crime trends across Cambridgeshire
+- Predict crime categories using machine learning
+- Compare Random Forest and XGBoost performance
+- Investigate the impact of historical crime patterns
+- Visualise crime hotspots using interactive maps
+- Evaluate prediction performance using multiple metrics
 
-Machine Learning Models
+---
+
+## 📊 Dataset
+
+### Source
+
+UK Police Crime Data
+
+### Coverage
+
+- Location: Cambridgeshire, UK
+- Period: 2017–2025
+- Records: 645,000+ crime incidents
+
+### Main Features
+
+| Feature | Description |
+|----------|-------------|
+| Crime Type | Recorded offence category |
+| Month | Crime occurrence month |
+| Year | Crime occurrence year |
+| Latitude | Crime location latitude |
+| Longitude | Crime location longitude |
+| LSOA Name | Geographic area identifier |
+| Season | Derived seasonal feature |
+| Lag Features | Previous month's crime activity |
+| Synthetic Context | Socioeconomic and environmental indicators |
+
+---
+
+## ⚙️ Data Processing Pipeline
+
+```text
+Raw Crime Data
+       │
+       ▼
+Data Cleaning
+       │
+       ▼
+Feature Engineering
+       │
+       ▼
+Crime Grouping
+       │
+       ▼
+Lag Feature Creation
+       │
+       ▼
+Model Training
+       │
+       ▼
+Evaluation
+       │
+       ▼
+Visualisation
+🔍 Crime Grouping
+
+The original 14 crime categories were grouped into 5 broader classes:
+
+Original Crime Types	Group
+Burglary, Robbery, Vehicle Crime, Shoplifting	Theft
+Violence, Weapons, Arson	Violence
+Anti-social Behaviour	Anti-social
+Drugs	Drugs
+Other Crime, Public Order	Other
+
+This reduced class imbalance and improved prediction performance.
+
+🤖 Machine Learning Models
 Random Forest
 
-Used as a baseline model for comparison.
+Used as the baseline model.
 
-XGBoost
+Accuracy: ~20–26%
 
-Final model selected due to superior performance on structured crime data.
+XGBoost (Final Model)
+
+Selected due to superior performance on structured crime data.
 
 Parameters:
 
@@ -70,57 +125,79 @@ max_depth = 8
 learning_rate = 0.05
 subsample = 0.9
 colsample_bytree = 0.9
-Results
-Random Forest
-Accuracy: ~20–26%
-XGBoost (Grouped Crime Prediction)
-Accuracy: 54.48%
-Macro F1 Score: 0.237
-Top-3 Accuracy: 89.55%
+📈 Results
+Final XGBoost Model Performance
+Metric	Score
+Accuracy	54.48%
+Macro F1 Score	0.237
+Top-3 Accuracy	89.55%
+Key Findings
 
-These results demonstrate a significant improvement over the baseline model.
+✅ Significant improvement over Random Forest
 
-Visualisations
+✅ Strong performance for major crime groups
+
+✅ Effective use of temporal and spatial features
+
+✅ Historical lag features improved predictions
+
+📊 Model Evaluation
+Confusion Matrix
+
+Insert your confusion matrix screenshot.
+
+Class Distribution
+
+Insert your SMOTE comparison graph.
+
+🌍 Interactive Crime Visualisation
 
 The project includes:
 
-Crime distribution charts
-Class imbalance analysis
-Confusion matrix
-Feature importance plots
 Crime hotspot heatmaps
-Interactive LSOA crime maps
+LSOA-level crime analysis
+Geographic crime clustering
+Interactive web-based maps
+Example
 
-Generated using:
-
-Matplotlib
-Seaborn
-Folium
-Technologies Used
+🛠 Technologies Used
+Programming
 Python
+Data Processing
 Pandas
 NumPy
+Machine Learning
 Scikit-learn
 XGBoost
-Folium
+Imbalanced-learn
+Visualisation
 Matplotlib
 Seaborn
+Folium
+Model Persistence
 Joblib
-Streamlit
-Project Structure
-├── datasets/
+📂 Project Structure
+Crime-Prediction-Project
+│
+├── datasets
 │   ├── crime_type_features.csv
 │   └── crime_type_features_WITH_SYNTHETIC_CONTEXT.csv
 │
-├── models/
+├── models
 │   ├── crime_type_xgb_GROUPED_model.joblib
-│   ├── crime_group_encoder.joblib
-│   └── lsoa_encoder.joblib
+│   ├── lsoa_encoder.joblib
+│   └── crime_group_encoder.joblib
 │
-├── maps/
+├── maps
 │   └── crime_lsoa_areas_google_style_with_heatmap_2025.html
 │
-├── scripts/
+├── images
+│   ├── confusion_matrix.png
+│   ├── crime_heatmap.png
+│   ├── class_distribution_compare_smote.png
+│   └── lsoa_map.png
+│
+├── scripts
 │   ├── data_cleaning.py
 │   ├── feature_engineering.py
 │   ├── random_forest_model.py
@@ -128,39 +205,43 @@ Project Structure
 │   └── map_generation.py
 │
 └── README.md
-Running the Project
-
-Install dependencies:
-
-pip install pandas numpy scikit-learn xgboost folium matplotlib seaborn joblib streamlit imbalanced-learn
-
-Train the model:
-
+🚀 Running the Project
+Install Dependencies
+pip install pandas numpy scikit-learn xgboost matplotlib seaborn folium imbalanced-learn joblib
+Train Model
 python xgboost_grouped_model.py
-
-Generate maps:
-
+Generate Crime Maps
 python map_generation.py
-
-Run Streamlit interface:
-
-streamlit run step8.py
-Future Improvements
-Incorporate real socioeconomic datasets.
-Experiment with deep learning approaches.
-Add real-time crime prediction capabilities.
-Improve minority class prediction performance.
-Deploy as a web application.
-Author
+🔮 Future Work
+Incorporate real socioeconomic datasets
+Improve minority crime prediction
+Explore deep learning approaches
+Deploy as a web application
+Integrate real-time crime data
+👨‍💻 Author
 
 Dev Narayan
 
+Final Year Project
+
 BSc Computer Science
 
-University Final Year Project
+University of Bedfordshire
 
-2026
+📜 License
 
-License
+This project was developed for academic and research purposes.
 
-This project is for academic and research purposes only
+
+# What you should add
+
+Create an `images` folder and add:
+
+1. `crime_heatmap.png` ← screenshot of your Folium heatmap
+2. `confusion_matrix.png`
+3. `class_distribution_compare_smote.png`
+4. `lsoa_map.png`
+
+The screenshots make a huge difference. A repository with visuals gets far more attention than one with only text.
+
+Also add your actual results near the top (54.48% accuracy, 89.55% top-3 accuracy) because that's what people look 
