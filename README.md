@@ -236,15 +236,5 @@ University of Bedfordshire
 This project was developed for academic and research purposes.
 
 
-# What you should add
 
-Create an `images` folder and add:
 
-1. `crime_heatmap.png` ← screenshot of your Folium heatmap
-2. `confusion_matrix.png`
-3. `class_distribution_compare_smote.png`
-4. `lsoa_map.png`
-
-The screenshots make a huge difference. A repository with visuals gets far more attention than one with only text.
-
-Also add your actual results near the top (54.48% accuracy, 89.55% top-3 accuracy) because that's what people look 
