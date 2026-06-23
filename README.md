@@ -1,14 +1,8 @@
 # 🚔 Predicting & Analysing Crime Types in Cambridgeshire
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue)  ![XGBoost](https://img.shields.io/badge/Model-XGBoost-green)  ![Status](https://img.shields.io/badge/Status-Completed-success)  ![License](https://img.shields.io/badge/License-Academic-orange)
+
 > A machine learning system for predicting crime categories using historical UK Police data, spatial features, and temporal lag patterns.
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-
-![XGBoost](https://img.shields.io/badge/Model-XGBoost-green)
-
-![Status](https://img.shields.io/badge/Status-Completed-success)
-
-![License](https://img.shields.io/badge/License-Academic-orange)
----
 
 ## 📌 Overview
 
@@ -244,6 +238,6 @@ University of Bedfordshire
 
 ## 📜 Academic Notice
 
-This project was developed as part of a final-year undergraduate dissertation in Computer Science at the University of Bedfordshire. It demonstrates machine learning, data analytics, and geospatial visualisation applied to crime prediction using historical UK Police data.
+This project was developed as part of a final-year undergraduate dissertation in Computer Science at the University of Anglia Ruskin. It demonstrates machine learning, data analytics, and geospatial visualisation applied to crime prediction using historical UK Police data.
 
 **Intended for academic, research, and educational purposes only.**
