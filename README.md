@@ -206,35 +206,44 @@ Crime-Prediction-Project
 │
 └── README.md
 
-🚀 Running the Project
-Install Dependencies
+## 🚀 Running the Project
+
+### Install Dependencies
+
 pip install pandas numpy scikit-learn xgboost matplotlib seaborn folium imbalanced-learn joblib
-Train Model
+
+### Train Model
+
 python xgboost_grouped_model.py
-Generate Crime Maps
+
+### Generate Crime Maps
+
 python map_generation.py
 
-🔮 Future Work
-Incorporate real socioeconomic datasets
-Improve minority crime prediction
-Explore deep learning approaches
-Deploy as a web application
-Integrate real-time crime data
+## 🚀 Project Demonstration
 
-👨‍💻 Author
+The project was developed using Python, XGBoost, Pandas, Scikit-learn, and Folium.
 
-Dev Narayan
+The complete workflow includes:
+- Data preprocessing
+- Feature engineering
+- Crime prediction modelling
+- Performance evaluation
+- Interactive crime mapping
 
-Final Year Project
+## 👨‍💻 Author
 
-BSc Computer Science
-
+**Dev Narayan**  
+BSc (Hons) Computer Science  
+Final Year Project  
 University of Bedfordshire
 
-📜 License
+---
 
-This project was developed for academic and research purposes.
+## 📜 Academic Use Notice
 
+This project was developed as part of a final-year undergraduate dissertation in Computer Science at the University of Bedfordshire.
 
+The work demonstrates the application of machine learning, data analytics, and geospatial visualisation techniques for crime prediction and analysis using historical crime data from Cambridgeshire.
 
-
+This repository is intended for academic, research, and educational purposes.
